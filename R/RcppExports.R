@@ -19,6 +19,13 @@ build_pedigrees_iterative <- function(population, progress = TRUE) {
     .Call('_pedinf_build_pedigrees_iterative', PACKAGE = 'pedinf', population, progress)
 }
 
+#' Build maternal pedigrees
+#' 
+#' @export
+build_maternal_pedigrees_recursive <- function(population, progress = TRUE) {
+    .Call('_pedinf_build_maternal_pedigrees_recursive', PACKAGE = 'pedinf', population, progress)
+}
+
 wipe_population <- function(population) {
     invisible(.Call('_pedinf_wipe_population', PACKAGE = 'pedinf', population))
 }
@@ -26,8 +33,8 @@ wipe_population <- function(population) {
 #' Construct a population
 #' 
 #' @export
-load_individuals <- function(pid, pid_mom, pid_dad, progress = TRUE, error_on_pid_not_found = TRUE) {
-    .Call('_pedinf_load_individuals', PACKAGE = 'pedinf', pid, pid_mom, pid_dad, progress, error_on_pid_not_found)
+load_individuals <- function(pid, is_male, pid_mom, pid_dad, progress = TRUE, error_on_pid_not_found = TRUE) {
+    .Call('_pedinf_load_individuals', PACKAGE = 'pedinf', pid, is_male, pid_mom, pid_dad, progress, error_on_pid_not_found)
 }
 
 pedinf_test <- function() {

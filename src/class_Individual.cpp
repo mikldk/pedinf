@@ -12,8 +12,9 @@
 Individual
 ==========================================
 */
-Individual::Individual(int pid) {
+Individual::Individual(int pid, bool is_male) {
   m_pid = pid;
+  m_is_male = is_male;
   m_children = new std::vector<Individual*>();
   m_neighbours = new std::vector<Individual*>();
 }
@@ -153,6 +154,47 @@ void Individual::set_pedigree_id_recursive_children(int id, Pedigree* ped, int* 
 }
 
 
+
+void Individual::set_maternal_pedigree_id_recursive(int id, Pedigree* ped, int* pedigree_size) {
+  if (this->pedigree_is_set()) {
+    return;
+  }
+  
+  /* Convention:
+   * 
+   * Only proceed to children of current object (*this*) is female, hence mother
+   * and thereby passes maternal lineage on.
+   * 
+   * So in other word: 
+   * 1) If *this* is a male, this function will only be called
+   * by *this*'s mother. And it will not include children in pedigree.
+   * 2) If *this* is a female, it could be called by a child or by 
+   * *this*'s mother. And it will pass on maternal lineage 
+   * to all children.
+   */
+  
+  m_pedigree = ped;
+  m_pedigree_id = id;
+  *pedigree_size += 1;
+  ped->add_member(this);
+  
+  if (Progress::check_abort() ) {
+    Rcpp::stop("Aborted");
+  }
+  
+  if (m_mother != nullptr) {
+    m_mother->set_pedigree_id_recursive(id, ped, pedigree_size);
+  }
+  
+  // Maternal pedigree; only mothers pass on their pedigree:
+  if (!m_is_male) {
+    for (auto &child : (*m_children)) {
+      ped->add_relation(this, child);
+      child->set_pedigree_id_recursive(id, ped, pedigree_size);
+    }
+  }
+}
+
 void Individual::set_pedigree_raw(Pedigree* ped) {
   if (this->pedigree_is_set()) {
     Rcpp::stop("pedigree_is_set");
@@ -170,5 +212,6 @@ void Individual::set_visit_color(int color) {
 int Individual::get_visit_color() const {
   return m_visit_color;
 }
+
 
 

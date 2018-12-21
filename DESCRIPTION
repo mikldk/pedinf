@@ -17,4 +17,5 @@ LinkingTo: Rcpp, RcppProgress, igraph
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 SystemRequirements: C++11
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
+Encoding: UTF-8

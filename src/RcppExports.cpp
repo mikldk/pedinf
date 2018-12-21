@@ -40,6 +40,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// build_maternal_pedigrees_recursive
+Rcpp::XPtr< std::vector<Pedigree*> > build_maternal_pedigrees_recursive(Rcpp::XPtr<Population> population, bool progress);
+RcppExport SEXP _pedinf_build_maternal_pedigrees_recursive(SEXP populationSEXP, SEXP progressSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<Population> >::type population(populationSEXP);
+    Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
+    rcpp_result_gen = Rcpp::wrap(build_maternal_pedigrees_recursive(population, progress));
+    return rcpp_result_gen;
+END_RCPP
+}
 // wipe_population
 void wipe_population(Rcpp::XPtr<Population> population);
 RcppExport SEXP _pedinf_wipe_population(SEXP populationSEXP) {
@@ -51,17 +63,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // load_individuals
-Rcpp::XPtr<Population> load_individuals(IntegerVector pid, IntegerVector pid_mom, IntegerVector pid_dad, bool progress, bool error_on_pid_not_found);
-RcppExport SEXP _pedinf_load_individuals(SEXP pidSEXP, SEXP pid_momSEXP, SEXP pid_dadSEXP, SEXP progressSEXP, SEXP error_on_pid_not_foundSEXP) {
+Rcpp::XPtr<Population> load_individuals(IntegerVector pid, LogicalVector is_male, IntegerVector pid_mom, IntegerVector pid_dad, bool progress, bool error_on_pid_not_found);
+RcppExport SEXP _pedinf_load_individuals(SEXP pidSEXP, SEXP is_maleSEXP, SEXP pid_momSEXP, SEXP pid_dadSEXP, SEXP progressSEXP, SEXP error_on_pid_not_foundSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< IntegerVector >::type pid(pidSEXP);
+    Rcpp::traits::input_parameter< LogicalVector >::type is_male(is_maleSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type pid_mom(pid_momSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type pid_dad(pid_dadSEXP);
     Rcpp::traits::input_parameter< bool >::type progress(progressSEXP);
     Rcpp::traits::input_parameter< bool >::type error_on_pid_not_found(error_on_pid_not_foundSEXP);
-    rcpp_result_gen = Rcpp::wrap(load_individuals(pid, pid_mom, pid_dad, progress, error_on_pid_not_found));
+    rcpp_result_gen = Rcpp::wrap(load_individuals(pid, is_male, pid_mom, pid_dad, progress, error_on_pid_not_found));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -268,8 +281,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pedinf_wipe_pedigrees", (DL_FUNC) &_pedinf_wipe_pedigrees, 1},
     {"_pedinf_build_pedigrees_recursive", (DL_FUNC) &_pedinf_build_pedigrees_recursive, 2},
     {"_pedinf_build_pedigrees_iterative", (DL_FUNC) &_pedinf_build_pedigrees_iterative, 2},
+    {"_pedinf_build_maternal_pedigrees_recursive", (DL_FUNC) &_pedinf_build_maternal_pedigrees_recursive, 2},
     {"_pedinf_wipe_population", (DL_FUNC) &_pedinf_wipe_population, 1},
-    {"_pedinf_load_individuals", (DL_FUNC) &_pedinf_load_individuals, 5},
+    {"_pedinf_load_individuals", (DL_FUNC) &_pedinf_load_individuals, 6},
     {"_pedinf_pedinf_test", (DL_FUNC) &_pedinf_pedinf_test, 0},
     {"_pedinf_pop_size", (DL_FUNC) &_pedinf_pop_size, 1},
     {"_pedinf_pedigrees_count", (DL_FUNC) &_pedinf_pedigrees_count, 1},

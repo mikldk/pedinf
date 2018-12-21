@@ -62,14 +62,12 @@ Rcpp::XPtr< std::vector<Pedigree*> > build_pedigrees_recursive(Rcpp::XPtr<Popula
     pedigrees->push_back(ped);
     ped = new Pedigree(pedigree_id);
     
-    // FIXME: Iterative instead of recursive
-    
     if (k % CHECK_ABORT_EVERY == 0 && Progress::check_abort() ) {
       return res;
     }
     
     if (progress) {
-      // FIXME: p.increment(ped_size);
+      // FIXME: p.increment(ped_size);?
       p.increment();
     }
     
@@ -312,3 +310,68 @@ Rcpp::XPtr< std::vector<Pedigree*> > build_pedigrees_iterative(Rcpp::XPtr<Popula
 
 
 
+
+
+
+//' Build maternal pedigrees
+//' 
+//' @export
+// [[Rcpp::export]]
+Rcpp::XPtr< std::vector<Pedigree*> > build_maternal_pedigrees_recursive(Rcpp::XPtr<Population> population, bool progress = true) {
+  //Rcpp::Rcout << "Bulding pedigrees!" << std::endl;
+  
+  // Construct pedigrees
+  //std::cout << "Starts giving pedigrees ids..." << std::endl;
+  
+  std::vector<Pedigree*>* pedigrees = new std::vector<Pedigree*>();
+  Rcpp::XPtr< std::vector<Pedigree*> > res(pedigrees, true);
+  //Rcpp::XPtr< std::vector<Pedigree*> > res(pedigrees, false);
+  res.attr("class") = CharacterVector::create("pedinf_abort", "pedinf_pedigreelist_abort", "externalptr");
+  
+  int pedigree_id = 1;
+  Pedigree* ped;
+  
+  std::unordered_map<int, Individual*> pop = *(population->get_population());
+  int N = pop.size();
+  int k = 0;
+  Progress p(N, progress);
+  
+  ped = new Pedigree(pedigree_id);
+  
+  for (auto it = pop.begin(); it != pop.end(); ++it) {
+    if (it->second->pedigree_is_set()) {
+      continue;
+    }
+    
+    int ped_size = 0;
+    it->second->set_maternal_pedigree_id_recursive(pedigree_id, ped, &ped_size);
+    
+    pedigree_id += 1;
+    
+    pedigrees->push_back(ped);
+    ped = new Pedigree(pedigree_id);
+    
+    if (k % CHECK_ABORT_EVERY == 0 && Progress::check_abort() ) {
+      return res;
+    }
+    
+    if (progress) {
+      // FIXME: p.increment(ped_size);?
+      p.increment();
+    }
+    
+    ++k;
+  }
+  
+  if (ped->get_all_individuals()->size() > 0) {
+    pedigrees->push_back(ped);
+  } else {
+    delete ped;
+  }
+  
+  std::sort(pedigrees->begin(), pedigrees->end(), pedigree_size_comparator);
+  
+  res.attr("class") = CharacterVector::create("pedinf_pedigreelist", "externalptr");
+  
+  return res;
+}

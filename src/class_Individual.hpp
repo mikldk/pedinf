@@ -5,6 +5,7 @@
 class Individual {
 private:
   int m_pid; 
+  bool m_is_male; // true: male; false = female
 
   std::vector<Individual*>* m_children = nullptr;
   Individual* m_mother = nullptr;
@@ -18,7 +19,7 @@ private:
   int m_visit_color = 0;
   
 public:
-  Individual(int pid);
+  Individual(int pid, bool is_male);
   ~Individual();
   int get_pid() const;
   void add_child(Individual* child);
@@ -37,6 +38,7 @@ public:
 
   void set_pedigree_id_recursive_parents(int id, Pedigree* ped, int* pedigree_size);
   void set_pedigree_id_recursive_children(int id, Pedigree* ped, int* pedigree_size);
+  void set_maternal_pedigree_id_recursive(int id, Pedigree* ped, int* pedigree_size);
   
   void set_pedigree_raw(Pedigree* ped);
   

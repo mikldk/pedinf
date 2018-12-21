@@ -21,6 +21,7 @@ void wipe_population(Rcpp::XPtr<Population> population) {
 //' @export
 // [[Rcpp::export]]
 Rcpp::XPtr<Population> load_individuals(IntegerVector pid, 
+                                        LogicalVector is_male,
                                         IntegerVector pid_mom, 
                                         IntegerVector pid_dad, 
                                         bool progress = true,
@@ -34,8 +35,8 @@ Rcpp::XPtr<Population> load_individuals(IntegerVector pid,
   
   int N = pid.size();
   
-  if (pid_mom.size() != N || pid_dad.size() != N) {
-    stop("all vectors (pid, pid_mom, pid_dad) must have same length");
+  if (is_male.size() != N || pid_mom.size() != N || pid_dad.size() != N) {
+    stop("all vectors (pid, is_male, pid_mom, pid_dad) must have same length");
   }
   
   
@@ -48,8 +49,9 @@ Rcpp::XPtr<Population> load_individuals(IntegerVector pid,
   // Build hashmap
   for (int k = 0; k < N; ++k) {
     int i_pid = pid[k];
+    bool i_is_male = is_male[k];
     
-    Individual* i = new Individual(i_pid);
+    Individual* i = new Individual(i_pid, i_is_male);
 
     (*pop)[i->get_pid()] = i;
     
