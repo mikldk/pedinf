@@ -162,7 +162,7 @@ void Individual::set_maternal_pedigree_id_recursive(int id, Pedigree* ped, int* 
   
   /* Convention:
    * 
-   * Only proceed to children of current object (*this*) is female, hence mother
+   * Only proceed to children of current object (*this*) if is female, hence mother
    * and thereby passes maternal lineage on.
    * 
    * So in other word: 
@@ -182,16 +182,20 @@ void Individual::set_maternal_pedigree_id_recursive(int id, Pedigree* ped, int* 
     Rcpp::stop("Aborted");
   }
   
+  // No matter gender: call mom
   if (m_mother != nullptr) {
-    m_mother->set_pedigree_id_recursive(id, ped, pedigree_size);
+    m_mother->set_maternal_pedigree_id_recursive(id, ped, pedigree_size);
   }
   
   // Maternal pedigree; only mothers pass on their pedigree:
-  if (!m_is_male) {
-    for (auto &child : (*m_children)) {
-      ped->add_relation(this, child);
-      child->set_pedigree_id_recursive(id, ped, pedigree_size);
-    }
+  if (m_is_male) {
+    return;
+  }
+  
+  // Females:  
+  for (auto &child : (*m_children)) {
+    ped->add_relation(this, child);
+    child->set_maternal_pedigree_id_recursive(id, ped, pedigree_size);
   }
 }
 

@@ -323,6 +323,11 @@ Rcpp::XPtr< std::vector<Pedigree*> > build_maternal_pedigrees_recursive(Rcpp::XP
   // Construct pedigrees
   //std::cout << "Starts giving pedigrees ids..." << std::endl;
   
+  /*
+   * NOTE: 
+   * MALES only inherit maternal pedigree
+   */
+  
   std::vector<Pedigree*>* pedigrees = new std::vector<Pedigree*>();
   Rcpp::XPtr< std::vector<Pedigree*> > res(pedigrees, true);
   //Rcpp::XPtr< std::vector<Pedigree*> > res(pedigrees, false);
@@ -356,8 +361,7 @@ Rcpp::XPtr< std::vector<Pedigree*> > build_maternal_pedigrees_recursive(Rcpp::XP
     }
     
     if (progress) {
-      // FIXME: p.increment(ped_size);?
-      p.increment();
+      p.increment(ped_size);
     }
     
     ++k;
